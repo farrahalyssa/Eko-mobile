@@ -1,7 +1,6 @@
 const mysql = require('mysql2/promise');
 const dbConfig = require('../config/dbConfig');
 
-// Get all notifications for a user
 async function getNotifications(userId) {
     let connection = await mysql.createConnection(dbConfig);
 
@@ -13,7 +12,6 @@ async function getNotifications(userId) {
     return notifications;
 }
 
-// Create a notification for a user
 async function createNotification(userId, content) {
     let connection = await mysql.createConnection(dbConfig);
 
@@ -24,7 +22,6 @@ async function createNotification(userId, content) {
     await connection.end();
 }
 
-// Delete a notification
 async function deleteNotification(notificationId) {
     let connection = await mysql.createConnection(dbConfig);
 

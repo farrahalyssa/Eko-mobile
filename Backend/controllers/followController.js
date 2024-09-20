@@ -48,7 +48,7 @@ async function getFollowing(req, res) {
     try {
         let following = await followModel.getFollowing(userId);
         const userIds = following.map(following => following.userId);
-        res.status(200).json(userIds);
+        res.status(200).json(following);
     } catch (err) {
         console.error('Error fetching following:', err);
         res.status(500).json({ error: 'Internal server error' });

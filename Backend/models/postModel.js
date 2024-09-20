@@ -2,7 +2,6 @@ const mysql = require('mysql2/promise');
 const dbConfig = require('../config/dbConfig');
 const crypto = require('crypto');
 
-// Create a post
 async function createPost(userId, content) {
     let connection = await mysql.createConnection(dbConfig);
     let postId = `${crypto.randomBytes(16).toString('hex')}`;
@@ -11,7 +10,6 @@ async function createPost(userId, content) {
     return postId;
 }
 
-// Delete a post
 async function deletePost(userId, postId) {
     let connection = await mysql.createConnection(dbConfig);
     await connection.execute(`DELETE FROM posts WHERE postId = ? AND userId = ?`, [postId, userId]);
@@ -20,7 +18,6 @@ async function deletePost(userId, postId) {
     await connection.end();
 }
 
-// Get a single post by ID
 async function getPostById(postId) {
     let connection = await mysql.createConnection(dbConfig);
     const [post] = await connection.execute(`
@@ -34,7 +31,6 @@ async function getPostById(postId) {
     return post[0];
 }
 
-// Get all posts by a user
 async function getPostsByUser(userId) {
     let connection = await mysql.createConnection(dbConfig);
     const [posts] = await connection.execute(`
@@ -45,7 +41,7 @@ async function getPostsByUser(userId) {
         JOIN users ON posts.userId = users.userId
         LEFT JOIN likes ON posts.postId = likes.postId AND likes.userId = ?
         WHERE posts.userId = ?
-    `, [userId, userId]); // Return all posts with like status
+    `, [userId, userId]); 
     await connection.end();
     return posts;
 }

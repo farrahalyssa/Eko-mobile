@@ -4,7 +4,7 @@ import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { StackParamList } from '../Types';
 import { Ionicons } from '@expo/vector-icons';
-import { API_URL } from '../../API_URL';
+import { API_URL } from '../API_URL';
 type ConnectionsRouteProp = RouteProp<StackParamList, 'Connections'>;
 
 interface Connection {

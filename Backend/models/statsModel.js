@@ -1,7 +1,6 @@
 const mysql = require('mysql2/promise');
 const dbConfig = require('../config/dbConfig');
 
-// Function to get post, follower, and following counts for a user
 async function getUserStats(userId) {
     console.log(userId);
 
@@ -18,7 +17,7 @@ async function getUserStats(userId) {
 
     await connection.end();
     console.log(stats);
-    return stats[0]; // Return the first result which contains the stats
+    return stats[0]; 
 }
 
 module.exports = {

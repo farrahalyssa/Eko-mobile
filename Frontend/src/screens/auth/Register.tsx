@@ -6,7 +6,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "../../Types";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_URL } from "../../utils/data";
+import { API_URL } from "../../API_URL";
 export default function Register() {   
     
     

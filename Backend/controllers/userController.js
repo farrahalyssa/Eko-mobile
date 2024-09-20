@@ -3,6 +3,11 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const mysql = require('mysql2/promise');
 const dbConfig = require('../config/dbConfig');
+const multer = require('multer');  // <-- Import multer
+const { s3Client, PutObjectCommand, GetObjectCommand } = require('../config/awsConfig');
+
+// Initialize multer for handling file uploads
+const upload = multer({ storage: multer.memoryStorage() });  // <-- Initialize multer
 
 // Register a new user
 async function registerUser(req, res) {
@@ -17,7 +22,7 @@ async function registerUser(req, res) {
             return res.status(400).json({ error: 'User already exists' });
         }
 
-        let hashedPassword = await bcrypt.hash(password, 10);
+        let hashedPassword = await bcrypt.hash(password, 12);
         let userId = crypto.randomBytes(16).toString('hex');
         await userModel.registerUser(name, username, email, hashedPassword, userId);
 
@@ -41,20 +46,16 @@ async function getAllUsers(req, res) {
 
 // Log in a user
 async function loginUser(req, res) {
-    let { email, password } = req.body; // Remove username since we're only using email for login
+    let { email, password } = req.body;
 
     if (!email || !password) {
         return res.status(400).json({ error: 'Email and password are required' });
     }
 
     try {
-        let connection = await mysql.createConnection(dbConfig);
-
         // Check if the user exists by email
-        let [user] = await connection.execute('SELECT * FROM users WHERE email = ?', [email]);
-
+        let user = await userModel.findUserByEmail(email);
         if (user.length === 0) {
-            await connection.end();
             return res.status(400).json({ error: 'User not found' });
         }
 
@@ -63,13 +64,10 @@ async function loginUser(req, res) {
         // Compare the provided password with the hashed password in the database
         let isMatch = await bcrypt.compare(password, foundUser.password);
         if (!isMatch) {
-            await connection.end();
             return res.status(400).json({ error: 'Invalid password' });
         }
 
-        // Mark the user as active
-        await connection.execute('UPDATE users SET active = 1 WHERE userId = ?', [foundUser.userId]);
-        await connection.end();
+        await userModel.updateUserActiveStatus(foundUser.userId, 1);
 
         res.status(200).json({
             message: 'Login successful',
@@ -87,7 +85,6 @@ async function loginUser(req, res) {
         res.status(500).json({ error: 'Internal server error' });
     }
 }
-
 
 // Log out a user
 async function logoutUser(req, res) {
@@ -113,10 +110,71 @@ async function deleteUser(req, res) {
     }
 }
 
+// Update user profile
+async function updateUser(req, res) {
+    const { userId } = req.params;
+    const { name, username, bio } = req.body;
+    console.log("name username bio", name, username, bio);
+    const profilePhotoFile = req.file; 
+
+    let profilephoto_url = null;
+
+    try {
+        if (profilePhotoFile) {
+            const uploadParams = {
+                Bucket: 'ekoapp-bucket', 
+                Key: `${userId}/profile-photos/${profilePhotoFile.originalname}`,
+                Body: profilePhotoFile.buffer,
+                ContentType: profilePhotoFile.mimetype,
+            };
+
+            await s3Client.send(new PutObjectCommand(uploadParams));
+
+            profilephoto_url = `https://${uploadParams.Bucket}.s3.amazonaws.com/${uploadParams.Key}`;
+        }
+
+        await userModel.updateUserProfile(userId, name, username, bio, profilephoto_url);
+
+        res.status(200).json({ message: 'Profile updated successfully', profilephoto_url });
+    } catch (err) {
+        console.error('Error updating profile:', err.message);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+async function getUserProfilePhoto(req, res) {
+    const { userId } = req.params;
+
+    try {
+        const user = await userModel.findUserById(userId);
+        if (!user || !user.profilephoto_url) {
+            return res.status(404).json({ error: 'User or profile photo not found' });
+        }
+
+        const key = user.profilephoto_url.split('.com/')[1]; 
+
+        const getObjectParams = {
+            Bucket: 'ekoapp-bucket',  
+            Key: key,  
+        };
+
+        const command = new GetObjectCommand(getObjectParams);
+        const data = await s3Client.send(command);
+
+        data.Body.pipe(res);
+
+    } catch (err) {
+        console.error('Error fetching profile photo:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
 module.exports = {
     registerUser,
     getAllUsers,
     loginUser,
     logoutUser,
     deleteUser,
+    updateUser,
+    getUserProfilePhoto
 };

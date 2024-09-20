@@ -4,7 +4,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native'; // Import navigation hook
 import { StackNavigationProp } from '@react-navigation/stack';
 import { StackParamList } from '../../Types'; // Ensure the TabParamList includes ExternalProfile
-import { API_URL } from '../../../API_URL';
+import { API_URL } from '../../API_URL';
 // Define the navigation prop type
 type SearchNavigationProp = StackNavigationProp<StackParamList, 'ExternalProfile'>;
 

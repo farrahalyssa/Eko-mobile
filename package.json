@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "expo-constants": "^16.0.2",
-    "react-native-config": "^1.5.3"
-  }
-}

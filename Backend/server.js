@@ -5,8 +5,13 @@ const bodyParser = require('body-parser');
 
 // Load environment variables
 dotenv.config({ path: './.env' });
-
-const app = express();
+console.log({
+    host: process.env.DATABASE_HOST,
+    user: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+    database: process.env.DATABASE,
+    port: process.env.DATABASE_PORT,
+  });const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware

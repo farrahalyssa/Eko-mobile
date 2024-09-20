@@ -10,7 +10,7 @@ import { useUserData } from '../utils/data';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
-import { API_URL } from '../../API_URL';
+import { API_URL } from '../API_URL';
 import { formatDateTime } from '../utils/DateUtils';
 import { navigateToProfile } from '../utils/ProfileNavigationUtils'; // Import the navigation utility function
 

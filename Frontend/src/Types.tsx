@@ -35,6 +35,7 @@ export type StackParamList = {
 
 //Tab
 export type TabParamList = {
+    Login: undefined;
     Home: any;
     Profile: {
         userId: string;

@@ -20,9 +20,6 @@ export default function Profile() {
     const { userData, setUserData, loading, error } = useUserData();
 
     const [refreshing, setRefreshing] = useState(false);
-    // console.log('Profile photo URL:', userData?.profilephoto_url);
-
-    
     // Function to refresh the profile data
     const refreshProfile = useCallback(async () => {
         setRefreshing(true);

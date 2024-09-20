@@ -22,7 +22,7 @@ import { usePostsData } from '../../utils/data';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { navigateToProfile } from '../../utils/ProfileNavigationUtils';
-import { API_URL } from '../../../API_URL';
+import { API_URL } from '../../API_URL';
 
 type PostDetailsRouteProp = RouteProp<StackParamList, 'PostDetails'>;
 

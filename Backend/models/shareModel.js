@@ -1,7 +1,6 @@
 const mysql = require('mysql2/promise');
 const dbConfig = require('../config/dbConfig');
 
-// Create a share for a post
 async function createShare(userId, postId) {
     let connection = await mysql.createConnection(dbConfig);
 
@@ -12,7 +11,6 @@ async function createShare(userId, postId) {
     await connection.end();
 }
 
-// Get all shares by a user
 async function getShares(userId) {
     let connection = await mysql.createConnection(dbConfig);
 
@@ -24,7 +22,6 @@ async function getShares(userId) {
     return shares;
 }
 
-// Unshare a post
 async function unsharePost(shareId) {
     let connection = await mysql.createConnection(dbConfig);
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
-import { API_URL } from '../../utils/data';
+import { API_URL } from '../../API_URL';
 const Likes = ({ route }: any) => {
   const { postId } = route.params; 
   const [likes, setLikes] = useState([]);

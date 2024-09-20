@@ -8,7 +8,7 @@ import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from "axios";
 import TabNav from "../../navigation/Tab";
-import { API_URL } from "../../utils/data";
+import { API_URL } from "../../API_URL";
 
 
 export default function Login() {
@@ -34,7 +34,7 @@ export default function Login() {
         try {
             const response = await axios.post(`http://${API_URL}/api/login`, {
                 email,
-                password,
+                password
             });
     
             if (response.status === 200) {

@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import { API_URL } from '../../API_URL';
+import { API_URL } from '../API_URL';
 
 
 export interface UserData {
@@ -275,3 +275,4 @@ export const useUserStats = (userId: string) => {
 
   return { stats, loading, refreshing, error, refreshStats };
 };
+

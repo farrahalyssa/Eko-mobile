@@ -15,7 +15,7 @@ import { StackParamList } from '../../Types';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { pickImage } from '../../utils/ImageUtils';
 import axios from 'axios';
-import { API_URL } from '../../utils/data';
+import { API_URL } from '../../API_URL';
 import { UserData, useUserData } from '../../utils/data';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -28,7 +28,6 @@ type EditProfileProps = {
 
 const EditProfile: React.FC<EditProfileProps> = ({ route }) => {
   if (!route) {
-      // handle the case where route is not provided
       return null;
   }
   const navigation = useNavigation<EditProfileNavigationProp>();
@@ -59,10 +58,11 @@ const EditProfile: React.FC<EditProfileProps> = ({ route }) => {
 
     try {
       const formData = new FormData();
-      formData.append('name', name);
-      formData.append('username', username);
-      formData.append('bio', bio);
+      formData.append('name', name);           // Correctly adding the name
+      formData.append('username', username);   // Correctly adding the username
+      formData.append('bio', bio);             // Correctly adding the bio
 
+      // Attach profile photo if present
       if (image) {
         formData.append('profilePhoto', {
           uri: image,
@@ -84,7 +84,6 @@ const EditProfile: React.FC<EditProfileProps> = ({ route }) => {
           name,
           username,
           bio,
-          
           email: userData.email,
           profilephoto_url: response.data.profilephoto_url || userData.profilephoto_url,
           active: userData.active,
@@ -103,36 +102,31 @@ const EditProfile: React.FC<EditProfileProps> = ({ route }) => {
   return (
     <SafeAreaView>
       <ScrollView>
-     
-
-              
-
-                       
-        <View style={[styles.container]}>
-
-        <TouchableOpacity style={styles.headerImageContainer}>
-                    <Image 
-                        source={{ uri: 'https://i.pinimg.com/736x/64/76/95/647695c27a66f0131b98f5cc73615874.jpg' }} 
-                        style={styles.headerImage} 
-                    />
-                </TouchableOpacity>
-            <View style={[styles.profileSection, {marginBottom: '5%',marginLeft: '-60%', marginTop:50 }]}>
-          <View style={styles.profileImageContainer}> 
-          <TouchableOpacity onPress={handlePickImage}>
-            <View>
-              {image ? (
-                <Image
-                  source={{ uri: image  }}
-                  style={{ width: 155, height: 155, borderRadius: 100, marginTop: '10%', marginBottom: '4%', marginHorizontal: 'auto' }}
-                />
-              ) : (
-                <Ionicons  style={[styles.profileImage, { width: 155, height: 155 }]}name="person-circle" size={155} color="#CFE1D0" />
-              )}
-            </View>
+        <View style={styles.container}>
+          <TouchableOpacity style={styles.headerImageContainer}>
+            <Image 
+              source={{ uri: 'https://i.pinimg.com/736x/64/76/95/647695c27a66f0131b98f5cc73615874.jpg' }} 
+              style={styles.headerImage} 
+            />
           </TouchableOpacity>
 
-        </View>
-        </View>
+          <View style={[styles.profileSection, {marginBottom: '5%', marginLeft: '-60%', marginTop: 50 }]}>
+            <View style={styles.profileImageContainer}>
+              <TouchableOpacity onPress={handlePickImage}>
+                <View>
+                  {image ? (
+                    <Image
+                      source={{ uri: image }}
+                      style={{ width: 155, height: 155, borderRadius: 100, marginTop: '10%', marginBottom: '4%' }}
+                    />
+                  ) : (
+                    <Ionicons style={[styles.profileImage, { width: 155, height: 155 }]} name="person-circle" size={155} color="#CFE1D0" />
+                  )}
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+
           <TextInput
             style={styles.textInput}
             placeholder="Name"

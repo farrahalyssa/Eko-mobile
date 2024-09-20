@@ -2,7 +2,6 @@ const mysql = require('mysql2/promise');
 const dbConfig = require('../config/dbConfig');
 const crypto = require('crypto');
 
-// Add a comment to a post
 async function addComment(postId, userId, content) {
     let connection = await mysql.createConnection(dbConfig);
     let commentId = `${crypto.randomBytes(16).toString('hex')}`;
@@ -13,7 +12,6 @@ async function addComment(postId, userId, content) {
     await connection.end();
 }
 
-// Get comments for a post
 async function getCommentsForPost(postId) {
     let connection = await mysql.createConnection(dbConfig);
     let [comments] = await connection.execute(`
@@ -27,7 +25,6 @@ async function getCommentsForPost(postId) {
     return comments;
 }
 
-// Delete a comment
 async function deleteComment(commentId) {
     let connection = await mysql.createConnection(dbConfig);
     await connection.execute(`DELETE FROM comments WHERE commentId = ?`, [commentId]);

@@ -1,22 +1,21 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
+const { updateUser } = require('../controllers/userController');
 const userController = require('../controllers/userController');
+const upload = multer({ storage: multer.memoryStorage() }); // Initialize multer
 
-// Register a user
 router.post('/api/register', userController.registerUser);
 
-// Get all users
 router.get('/api/users', userController.getAllUsers);
 
-// Login user
 router.post('/api/login', userController.loginUser);
 
-// Logout user
 router.put('/api/logout', userController.logoutUser);
 
-// Delete user account
 router.delete('/api/users/:userId/delete-account', userController.deleteUser);
 
+router.put('/api/users/:userId', upload.single('profilePhoto'), updateUser);
 
 
 module.exports = router;

@@ -8,7 +8,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackParamList } from '../Types';  
 import axios from 'axios';
 import { useUserData } from '../utils/data';
-import { API_URL } from '../../API_URL';
+import { API_URL } from '../API_URL'; 
 
 type AddPostProps = {
     onPostSubmitted?: (newPost: any) => void;  // Define the callback prop
