@@ -1,6 +1,5 @@
 const likeModel = require('../models/likeModel');
 
-// Like a post
 async function likePost(req, res) {
     const { postId } = req.params;
     const { userId } = req.body;
@@ -18,7 +17,6 @@ async function likePost(req, res) {
     }
 }
 
-// Unlike a post
 async function unlikePost(req, res) {
     const { postId } = req.params;
     const { userId } = req.body;
@@ -36,7 +34,6 @@ async function unlikePost(req, res) {
     }
 }
 
-// Get likes for a post
 async function getLikes(req, res) {
     const { postId } = req.params;
 
@@ -49,7 +46,6 @@ async function getLikes(req, res) {
     }
 }
 
-// Count likes for a post
 async function countLikes(req, res) {
     const { postId } = req.params;
 

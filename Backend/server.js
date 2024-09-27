@@ -27,7 +27,8 @@ const likeRoutes = require('./routes/likeRoutes');
 const followRoutes = require('./routes/followRoutes');
 const statsRoutes = require('./routes/statsRoutes');
 const searchRoutes = require('./routes/searchRoutes');
-
+const messageRoutes = require('./routes/messageRoutes');
+const chatRoomRoutes = require('./routes/chatRoomRoutes');
 
 // Use routes
 app.use(userRoutes);
@@ -37,6 +38,8 @@ app.use(likeRoutes);
 app.use(followRoutes);
 app.use(statsRoutes);
 app.use(searchRoutes);
+app.use(messageRoutes);
+app.use(chatRoomRoutes);
 
 // Start the server
 app.listen(port, () => {

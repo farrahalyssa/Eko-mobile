@@ -12,6 +12,18 @@ async function getAllUsers() {
     }
 }
 
+async function getOtherUserData(userId) {
+    let connection;
+    try {
+        connection = await mysql.createConnection(dbConfig);
+        let [user] = await connection.execute('SELECT userId, name, username, email, bio, profilephoto_url, active, created_at FROM users WHERE userId = ?', [userId]);
+        console.log(user);
+        return user;
+    } finally {
+        if (connection) connection.end();
+    }
+}
+
 async function registerUser(name, username, email, hashedPassword, userId) {
     let connection;
     try {
@@ -110,5 +122,6 @@ module.exports = {
     findUserById,
     updateUserActiveStatus,
     deleteUserById,
-    updateUserProfile
+    updateUserProfile,
+    getOtherUserData
 };

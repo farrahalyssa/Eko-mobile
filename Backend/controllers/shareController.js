@@ -1,6 +1,5 @@
 const shareModel = require('../models/shareModel');
 
-// Create a share for a post
 async function createShare(req, res) {
     let { userId, postId } = req.body;
 
@@ -17,7 +16,6 @@ async function createShare(req, res) {
     }
 }
 
-// Get all shares for a user
 async function getShares(req, res) {
     let { userId } = req.params;
 
@@ -33,7 +31,6 @@ async function getShares(req, res) {
     }
 }
 
-// Unshare a post
 async function unsharePost(req, res) {
     let { shareId } = req.params;
 

@@ -17,5 +17,5 @@ router.delete('/api/users/:userId/delete-account', userController.deleteUser);
 
 router.put('/api/users/:userId', upload.single('profilePhoto'), updateUser);
 
-
+router.get('/api/users/:userId', userController.getOtherUserData);
 module.exports = router;

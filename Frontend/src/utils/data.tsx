@@ -56,8 +56,7 @@ export const useUserData = () => {
 
           // Fetch the list of users this user is following from the backend
           const followDataResponse = await axios.get<string[]>(`http://${API_URL}/api/users/${data.userId}/followingData`);
-          console.log(`Followed Users' userId:`, followDataResponse.data);
-          
+
           // Update the followedUsers state with the fetched data
           setFollowedUsers(followDataResponse.data);
         } else {
@@ -135,10 +134,19 @@ export interface Post {
   userBio?: string;
   userCreatedAt?: string;
   likes: number;
-  isLiked: boolean;  // New field to track whether the post is liked by the user
+  isLiked: boolean;  
 }
 
-
+export const getOtherUserData = async (userId: string): Promise<UserData | null> => {
+  try {
+    const response = await axios.get<UserData>(`http://${API_URL}/api/users/${userId}`);
+    console.log(response.data);
+    return response.data; 
+  } catch (error) {
+    console.error('Error fetching other user data:', error);
+    return null;
+  }
+};
 
 export type Comment = {
   commentId: number;
@@ -209,10 +217,9 @@ export type ProfileParams = {
 
 
 
-// The function to fetch user stats from the API
 export const fetchUserStats = async (userId: string, setLoading: (loading: boolean) => void, setRefreshing: (refreshing: boolean) => void) => {
-  setLoading(true); // Set loading to true when fetching starts
-  setRefreshing(false); // Disable refreshing after the fetch starts
+  setLoading(true); 
+  setRefreshing(false); 
 
   try {
     const response = await axios.get(`http://${API_URL}/api/users/${userId}/stats`);

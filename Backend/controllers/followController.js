@@ -1,6 +1,5 @@
 const followModel = require('../models/followModel');
 
-// Follow a user
 async function followUser(req, res) {
     const { userId } = req.params;
     const { followingUserId } = req.body;
@@ -14,7 +13,6 @@ async function followUser(req, res) {
     }
 }
 
-// Unfollow a user
 async function unfollowUser(req, res) {
     const { userId } = req.params;
     const { followingUserId } = req.body;
@@ -28,7 +26,6 @@ async function unfollowUser(req, res) {
     }
 }
 
-// Get followers
 async function getFollowers(req, res) {
     const { userId } = req.params;
 
@@ -41,7 +38,6 @@ async function getFollowers(req, res) {
     }
 }
 
-// Get following
 async function getFollowing(req, res) {
     const { userId } = req.params;
 

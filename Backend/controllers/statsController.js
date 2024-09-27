@@ -1,6 +1,5 @@
 const statsModel = require('../models/statsModel');
 
-// Controller to get user statistics
 async function getUserStats(req, res) {
     let { userId } = req.params;
 

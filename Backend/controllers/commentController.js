@@ -1,6 +1,5 @@
 const commentModel = require('../models/commentModel');
 
-// Add a comment
 async function addComment(req, res) {
     const { postId } = req.params;
     const { userId, content } = req.body;
@@ -18,7 +17,6 @@ async function addComment(req, res) {
     }
 }
 
-// Get comments for a post
 async function getComments(req, res) {
     const { postId } = req.params;
 
@@ -31,7 +29,6 @@ async function getComments(req, res) {
     }
 }
 
-// Delete a comment
 async function deleteComment(req, res) {
     const { commentId } = req.params;
 

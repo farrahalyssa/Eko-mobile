@@ -59,7 +59,7 @@ export default function TabNav() {
           title: '',
           headerLeft: () => (
             <View style={{marginLeft: 15}}>  
-            <TouchableOpacity onPress={() => {navigation.navigate('Login');}}>
+            <TouchableOpacity>
             <Ionicons name="log-out-outline" size={24} color="#646B4B" />
             </TouchableOpacity>
             </View>

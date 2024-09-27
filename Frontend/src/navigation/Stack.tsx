@@ -12,6 +12,7 @@ import Likes from '../screens/details/Likes';
 import ExternalProfile from '../screens/main/ExternalProfile';
 import Connections from '../components/Connections';
 import { StackParamList } from '../Types';
+import ChatRoom from '../screens/main/Messages/ChatRoom';
 export default function StackNav(){
     const Stack = createStackNavigator();
 
@@ -64,6 +65,19 @@ export default function StackNav(){
                     headerTintColor: '#646B4B',
                 }} 
                 />
+                 <Stack.Screen
+                name="ChatRoom"
+                component={ChatRoom}
+                options={{
+                    title: '',
+                    headerBackTitle: ' ', 
+                    headerStyle: { 
+                    backgroundColor: 'transparent',
+                    },
+                    headerTintColor: '#646B4B',
+                }}
+         
+        />
             </Stack.Navigator>
         </NavigationContainer>
     );

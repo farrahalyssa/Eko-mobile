@@ -25,4 +25,9 @@ export const formatDateTime = (dateString: string | number | Date): string  => {
   
     return formattedDate;
   };
-    
+
+  export const formatTimestamp = (timestamp: string) => {
+    if (!timestamp) return '';
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };

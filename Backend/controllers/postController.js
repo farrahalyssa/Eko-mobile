@@ -1,6 +1,5 @@
 const postModel = require('../models/postModel');
 
-// Create a new post
 async function createPost(req, res) {
     let { userId } = req.params;
     let { content } = req.body;
@@ -18,7 +17,6 @@ async function createPost(req, res) {
     }
 }
 
-// Delete a post
 async function deletePost(req, res) {
     let { userId, postId } = req.params;
 
@@ -31,7 +29,6 @@ async function deletePost(req, res) {
     }
 }
 
-// Get a single post by its ID
 async function getPostById(req, res) {
     const { postId } = req.params;
 
@@ -47,7 +44,6 @@ async function getPostById(req, res) {
     }
 }
 
-// Get all posts by a user
 async function getPostsByUser(req, res) {
     let { userId } = req.params;
 

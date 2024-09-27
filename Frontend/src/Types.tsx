@@ -30,6 +30,12 @@ export type StackParamList = {
         bio: string;
         createdAt: string;
       };
+      ChatRoom: {
+        chatRoomId: string;
+        senderId: string;
+        receiverId: string;
+        
+      }
     }
 
 

@@ -9,7 +9,6 @@ const { s3Client, PutObjectCommand, GetObjectCommand } = require('../config/awsC
 // Initialize multer for handling file uploads
 const upload = multer({ storage: multer.memoryStorage() });  // <-- Initialize multer
 
-// Register a new user
 async function registerUser(req, res) {
     let { name, username, email, password } = req.body;
     if (!name || !username || !email || !password) {
@@ -33,7 +32,18 @@ async function registerUser(req, res) {
     }
 }
 
-// Get all users
+async function getOtherUserData(req, res) {
+    const { userId } = req.params;
+
+    try {
+        const user = await userModel.getOtherUserData(userId);
+        console.log(user);
+        res.status(200).json(user);
+    } catch (err) {
+        console.error('Error fetching user:', err);
+        res.status(500).json({ error: 'Internal server error' });
+}
+}
 async function getAllUsers(req, res) {
     try {
         let users = await userModel.getAllUsers();
@@ -44,7 +54,7 @@ async function getAllUsers(req, res) {
     }
 }
 
-// Log in a user
+
 async function loginUser(req, res) {
     let { email, password } = req.body;
 
@@ -53,7 +63,6 @@ async function loginUser(req, res) {
     }
 
     try {
-        // Check if the user exists by email
         let user = await userModel.findUserByEmail(email);
         if (user.length === 0) {
             return res.status(400).json({ error: 'User not found' });
@@ -61,7 +70,6 @@ async function loginUser(req, res) {
 
         let foundUser = user[0];
 
-        // Compare the provided password with the hashed password in the database
         let isMatch = await bcrypt.compare(password, foundUser.password);
         if (!isMatch) {
             return res.status(400).json({ error: 'Invalid password' });
@@ -86,7 +94,6 @@ async function loginUser(req, res) {
     }
 }
 
-// Log out a user
 async function logoutUser(req, res) {
     let userId = req.body.userId;
     try {
@@ -98,7 +105,6 @@ async function logoutUser(req, res) {
     }
 }
 
-// Delete a user
 async function deleteUser(req, res) {
     let { userId } = req.params;
     try {
@@ -110,7 +116,6 @@ async function deleteUser(req, res) {
     }
 }
 
-// Update user profile
 async function updateUser(req, res) {
     const { userId } = req.params;
     const { name, username, bio } = req.body;
@@ -176,5 +181,6 @@ module.exports = {
     logoutUser,
     deleteUser,
     updateUser,
-    getUserProfilePhoto
+    getUserProfilePhoto,
+    getOtherUserData
 };
