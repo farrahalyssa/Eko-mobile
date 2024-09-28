@@ -9,7 +9,7 @@ import { TabParamList } from "../../Types";
 import ProfileStats from "../../components/ProfileStats";
 import Activity from "../../components/Activity";
 import ProfileTopButton from "../../components/ProfileTopButton";
-import Posts from "../../components/Posts";
+import ProfilePosts from "../../components/ProfilePosts";
 import { useSafeAreaInsets } from 'react-native-safe-area-context'; // To account for safe areas on iOS
 import { formatDateTimeMonthYear } from "../../utils/DateUtils";
 export default function Profile() {
@@ -94,7 +94,7 @@ export default function Profile() {
                 <ProfileStats userId={userData?.userId || ""} />
                 <View style={{marginBottom: 10}}></View>
                 {/* <Activity /> */}
-                <Posts profileUserId={userData?.userId || ""}/>
+                <ProfilePosts profileUserId={userData?.userId || ""}/>
             </ScrollView>
 
             <View>

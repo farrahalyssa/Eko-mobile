@@ -31,9 +31,10 @@ async function deletePost(req, res) {
 
 async function getPostById(req, res) {
     const { postId } = req.params;
+    const { userId } = req.params;
 
     try {
-        const postDetails = await postModel.getPostById(postId);
+        const postDetails = await postModel.getPostById(userId,postId);
         if (!postDetails) {
             return res.status(404).json({ error: 'Post not found' });
         }
@@ -56,9 +57,22 @@ async function getPostsByUser(req, res) {
     }
 }
 
+async function getFeedPosts(req, res) {
+    let { userId } = req.params;
+    console.log('Received userId:', userId); 
+    try {
+        let posts = await postModel.getFeedPosts(userId);
+        res.status(200).json(posts);
+    } catch (err) {
+        console.error('Error fetching posts:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
 module.exports = {
     createPost,
     deletePost,
     getPostById,
     getPostsByUser,
+    getFeedPosts
 };

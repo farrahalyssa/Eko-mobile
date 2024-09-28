@@ -3,7 +3,7 @@ import { SafeAreaView, Text, View, TouchableOpacity, ScrollView } from "react-na
 import { TabParamList } from "../../Types";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import Posts from "../../components/Posts";
+import FeedPosts from "../../components/FeedPosts";
 import Loading from "../../components/Loading";
 import { useUserData } from "../../utils/data";
 
@@ -15,8 +15,7 @@ export default function Home() {
 
     return (
         <ScrollView>
-            {/* Pass both userId and followed users' IDs to the Posts component */}
-            <Posts profileUserId={userData?.userId || ''}/>
+            <FeedPosts/>
         </ScrollView>
     );
 }

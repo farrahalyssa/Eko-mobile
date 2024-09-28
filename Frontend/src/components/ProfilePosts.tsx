@@ -20,7 +20,7 @@ interface PostsProps {
     profileUserId: string;
 }
 
-export default function Posts({ profileUserId }: PostsProps) {
+export default function ProfilePosts({ profileUserId }: PostsProps) {
     const { userData } = useUserData();
     const userIdToFetch = profileUserId || userData?.userId || '';
     let { posts, loading, error, fetchPosts } = usePostsData(userIdToFetch);
@@ -172,7 +172,11 @@ export default function Posts({ profileUserId }: PostsProps) {
                             size={24}
                             color = "#646B4B"
                         />
-                        <TouchableOpacity onPress={() => navigateToLikes(post.postId)}><Text style={{ color: '#646B4B', fontSize: 12 }}>{post.likes}</Text>
+                        <TouchableOpacity onPress={() => 
+ {
+    console.log(post.likes)
+    navigateToLikes(post.postId)}}>                                
+                                <Text style={{ color: '#646B4B', fontSize: 12 }}>{post.likes}</Text>
                         </TouchableOpacity>
                         </View>
                         </TouchableOpacity>

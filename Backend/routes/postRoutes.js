@@ -10,4 +10,6 @@ router.get('/api/users/:userId/posts/:postId', postController.getPostById);
 
 router.get('/api/users/:userId/posts', postController.getPostsByUser);
 
+router.get('/api/users/:userId/feed', postController.getFeedPosts);
+
 module.exports = router;

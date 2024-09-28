@@ -6,7 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { styles } from "../../utils/Styles";
 import { StackParamList, TabParamList } from "../../Types";
 import ProfileStats from "../../components/ProfileStats";
-import Posts from "../../components/Posts";
+import ProfilePosts from "../../components/ProfilePosts";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { formatDateTimeMonthYear } from "../../utils/DateUtils";
 import ProfileTopButton from "../../components/ProfileTopButton"; // Add the import for ProfileTopButton
@@ -67,7 +67,7 @@ export default function ExternalProfile() {
 
                 <ProfileStats userId={userId}/>
                 <View style={{marginBottom: 10}}></View>
-                <Posts profileUserId={userId}/>
+                <ProfilePosts profileUserId={userId}/>
             </ScrollView>
 
             <View>

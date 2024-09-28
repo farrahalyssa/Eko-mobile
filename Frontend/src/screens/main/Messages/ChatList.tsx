@@ -97,7 +97,7 @@ export default function ChatList() {
   if (loading) {
     return (
       <View style={styles.container}>
-        <Text>Loading chat rooms...</Text>
+        <Text>Loading chats...</Text>
       </View>
     );
   }

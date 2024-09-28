@@ -42,16 +42,20 @@ const PostDetails = () => {
     navigation.navigate('Likes', { postId });
   };
 
-  
-  // Fetch post details and comments
   useEffect(() => {
-    
     const fetchPostDetails = async () => {
       try {
+        // Fetch the main post details (assuming response.data is a single post, not an array)
         const response = await axios.get<Post>(`http://${API_URL}/api/users/${userId}/posts/${postId}`);
-        setPost(response.data);
-
-
+        const postData = response.data;
+  
+        // Fetch the like count for the single post
+        const likeCount = await fetchLikeCount(postId, postData.userId);
+  
+        // Set the post state with the like count included
+        setPost({ ...postData, likes: likeCount });
+  
+        // Fetch comments for the post
         const commentsResponse = await axios.get<Comment[]>(`http://${API_URL}/api/posts/${postId}/comments`);
         setComments(commentsResponse.data);
       } catch (error) {
@@ -60,32 +64,71 @@ const PostDetails = () => {
         setLoading(false);
       }
     };
-
+  
     fetchPostDetails();
   }, [postId, userId]);
+  
+  // Function to fetch the like count for a specific post
+  const fetchLikeCount = async (postId: string, userId: string) => {
+    console.log(postId, userId);
+    try {
+
+      const response = await axios.get(`http://${API_URL}/api/users/${userId}/posts/${postId}/countLikes`);
+      return response.data.likeCount; // Assuming the API returns { likeCount: number }
+    } catch (err) {
+      console.error('Error fetching like count:', err);
+      return 0; // Return 0 if there is an error
+    }
+  };
+  
+  
+  
 
   const handleLike = async (postId: string, isLiked: boolean) => {
-    try {
-      if (!userData?.userId) {
-        console.error("User ID is missing");
-        return;
-      }
+    console.log("hehehe");
+    console.log(isLiked);
 
+    if (!userData?.userId) {
+      console.error("User ID is missing");
+      return;
+    }
+    try {
+      setPost((prevPost) => {
+        if (!prevPost) return prevPost;
+  
+        return {
+          ...prevPost,
+          isLiked: !prevPost.isLiked,
+          likes: prevPost.isLiked ? prevPost.likes - 1 : prevPost.likes + 1,
+        };
+      });
+  
       if (!isLiked) {
         await axios.post(`http://${API_URL}/api/posts/${postId}/likes`, { userId: userData.userId });
       } else {
         await axios.delete(`http://${API_URL}/api/posts/${postId}/likes`, {
-          data: { userId: userData.userId }
+          data: { userId: userData.userId },
         });
       }
-
-      fetchPosts();
+  
+      // No need to refetch posts; we already updated the local state.
     } catch (err) {
       console.error(`Error ${isLiked ? 'unliking' : 'liking'} post:`, err);
+  
+      // Revert the optimistic update if API call fails
+      setPost((prevPost) => {
+        if (!prevPost) return prevPost;
+  
+        return {
+          ...prevPost,
+          isLiked: !prevPost.isLiked,
+          likes: prevPost.isLiked ? prevPost.likes - 1 : prevPost.likes + 1,
+        };
+      });
     }
   };
+  
 
-  // Submit a new comment
   const handleSubmitComment = async () => {
     if (commentText.trim() === '') return;
 
@@ -157,9 +200,14 @@ const PostDetails = () => {
       <Text style={[styles.subtext, { marginHorizontal: '3%' }]}>{formatDateTime(post.createdAt)}</Text>
 
       <View style={[styles.rowContainer, {paddingBottom:20}]}>
-        <TouchableOpacity onPress={() => handleLike(post.postId, post.isLiked)}>
+        <TouchableOpacity onPress={() => 
+        {
+          console.log("hehehe");
+          console.log(post);
+          console.log(post.isLiked);
+          handleLike(post.postId, post.isLiked)}}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Ionicons name={post.isLiked ? 'heart' : 'heart-outline'} size={24} color="#646B4B" />
+            <Ionicons name={post?.isLiked ? 'heart' : 'heart-outline'} size={24} color="#646B4B" />
             <TouchableOpacity onPress={navigateToLikes}><Text style={{ color: '#646B4B', fontSize: 12 }}>{post.likes}</Text></TouchableOpacity>
           </View>
         </TouchableOpacity>

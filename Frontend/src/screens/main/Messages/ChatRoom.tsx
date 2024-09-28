@@ -41,7 +41,6 @@ const ChatRoom = ({ route }: any) => {
     }
   };
 
-  // Send a new message
   const handleSend = async () => {
     if (message.trim()) {
       try {
