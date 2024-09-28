@@ -39,8 +39,28 @@ const getChatRoomById = async (chatRoomId) => {
     return rows.length > 0 ? rows[0] : null;
 };
 
+const getChatRoomByUserIds = async (userId) => {
+    const sql = `
+        SELECT * 
+        FROM messages 
+        WHERE senderId = ? OR receiverId = ?
+        ORDER BY created_at DESC
+        LIMIT 1
+    `;
+    
+    if (!userId) {
+      throw new Error('userId is undefined');
+    }
+
+    const [rows] = await db.execute(sql, [userId, userId]);
+    return rows.length > 0 ? rows[0] : null;
+};
+
+
+  
 module.exports = {
     createChatRoom,
     findOrCreateChatRoom,
     getChatRoomById,
+    getChatRoomByUserIds
 };

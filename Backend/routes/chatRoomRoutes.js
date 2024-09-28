@@ -8,4 +8,6 @@ router.get('/api/chatrooms/:chatRoomId/messages', chatRoomController.getMessages
 
 router.post('/api/chatrooms/:chatRoomId/mark-seen', chatRoomController.markMessagesAsSeenController);
 
+router.get('/api/users/:userId/chatrooms', chatRoomController.getChatRoomByUserIdsController);
+
 module.exports = router;

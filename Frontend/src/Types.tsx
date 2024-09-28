@@ -33,9 +33,10 @@ export type StackParamList = {
       ChatRoom: {
         chatRoomId: string;
         senderId: string;
-        receiverId: string;
-        
-      }
+        receiverId: string; 
+      };
+      ChatList: undefined;
+
     }
 
 
@@ -54,6 +55,7 @@ export type TabParamList = {
     AddPost: any;
     Search: any;
     Notification: any;
+    ChatList: undefined;
 
 }
 

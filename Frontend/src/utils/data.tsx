@@ -215,6 +215,20 @@ export type ProfileParams = {
   createdAt: string;
 };
 
+export const fetchUsersChats = async (userId: string) => {
+  try {
+
+    const response = await axios.get(`http://${API_URL}/api/users/${userId}/chatrooms`, {
+      params: { userId }
+    });
+
+    return response.data; // Return the parsed JSON data directly
+  } catch (error) {
+    
+      console.error('Unexpected error fetching user chats:', error);
+      return null;
+  }
+};
 
 
 export const fetchUserStats = async (userId: string, setLoading: (loading: boolean) => void, setRefreshing: (refreshing: boolean) => void) => {
