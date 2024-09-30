@@ -1,4 +1,6 @@
 const followModel = require('../models/followModel');
+const notificationModel = require('../models/notificationModel'); // Import notification model
+
 
 async function followUser(req, res) {
     const { userId } = req.params;
@@ -6,12 +8,19 @@ async function followUser(req, res) {
 
     try {
         await followModel.followUser(userId, followingUserId);
+
+        // Create a follow notification
+        if (userId !== followingUserId) {
+            await notificationModel.createNotification(followingUserId, userId, 'follow', null, 'started following you');
+        }
+
         res.status(201).json({ message: 'Follow created successfully' });
     } catch (err) {
         console.error('Error creating follow:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
 }
+
 
 async function unfollowUser(req, res) {
     const { userId } = req.params;

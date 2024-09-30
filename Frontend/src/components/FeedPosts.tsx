@@ -12,6 +12,8 @@ import axios from 'axios';
 import { API_URL } from '../API_URL';
 import { formatDateTime } from '../utils/DateUtils';
 import { navigateToProfile } from '../utils/ProfileNavigationUtils';
+import { getOtherUserData } from '../utils/data';
+import customLogger from '../utils/loggerUtils';
 
 type Post = {
     postId: string;
@@ -98,8 +100,26 @@ export default function FeedPosts() {
         fetchPosts().finally(() => setRefreshing(false));
     }, [fetchPosts]);
 
-    // Handle liking/unliking posts
-    const handleLike = async (postId: string, isLiked: boolean) => {
+    const handlePress = async (item: Post) => {
+        try {
+          const otherUserData = await getOtherUserData(item.userId);
+          const userData = Array.isArray(otherUserData) ? otherUserData[0] : otherUserData;
+          customLogger(userData); 
+  
+          navigateToProfile(
+            navigation, 
+            item.userId, 
+            item.name, 
+            item.username, 
+            userData?.profilephoto_url, 
+            userData?.bio || '', 
+            userData?.created_at || ''
+          );
+        } catch (error) {
+          console.error('Error fetching other user data:', error);
+        }
+    };
+            const handleLike = async (postId: string, isLiked: boolean) => {
         try {
             if (!userData?.userId) {
                 console.error("User ID is missing");
@@ -121,7 +141,8 @@ export default function FeedPosts() {
 
             // Make the API request
             if (!isLiked) {
-                await axios.post(`http://${API_URL}/api/posts/${postId}/likes`, { userId: userData.userId });
+                
+                await axios.post(`http://${API_URL}/api/posts/${postId}/likes`, { userId: userData.userId, postId: postId });
             } else {
                 await axios.delete(`http://${API_URL}/api/posts/${postId}/likes`, {
                     data: { userId: userData.userId }
@@ -202,15 +223,7 @@ export default function FeedPosts() {
                         <View style={styles.rowContainer2}>
                             <TouchableOpacity
                                 onPress={() => {
-                                    navigateToProfile(
-                                        navigation as StackNavigationProp<StackParamList, 'ExternalProfile'>,
-                                        post.userId || '',
-                                        post.name || '',
-                                        post.username || '',
-                                        post.profileImage || '',
-                                        post.userBio || '',
-                                        post.userCreatedAt || ''
-                                    );
+                                    handlePress(post);
                                 }}
                             >
                                 <View style={[styles.rowContainer2]}>

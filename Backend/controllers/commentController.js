@@ -1,8 +1,10 @@
 const commentModel = require('../models/commentModel');
+const notificationModel = require('../models/notificationModel'); // Import notification model
 
 async function addComment(req, res) {
     const { postId } = req.params;
     const { userId, content } = req.body;
+    console.log('Received userId:', userId, 'and content:', content, 'for postId:', postId);
 
     if (!userId || !content) {
         return res.status(400).json({ error: 'Missing userId or content' });
@@ -10,6 +12,15 @@ async function addComment(req, res) {
 
     try {
         await commentModel.addComment(postId, userId, content);
+
+        // Get post owner (assume you have a method for this in postModel)
+        const postOwnerId = await commentModel.getPostOwner(postId);
+
+        // Create a comment notification
+        if (postOwnerId !== userId) {
+            await notificationModel.createNotification(postOwnerId, userId, 'comment', postId, content);
+        }
+
         res.status(201).json({ message: 'Comment added successfully' });
     } catch (err) {
         console.error('Error adding comment:', err);

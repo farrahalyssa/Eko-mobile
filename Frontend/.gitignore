@@ -35,3 +35,4 @@ yarn-error.*
 *.tsbuildinfo
 
 API_URL.tsx
+EXPO_PROJECT_ID.tsx

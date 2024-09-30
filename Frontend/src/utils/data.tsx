@@ -147,7 +147,8 @@ export const getOtherUserData = async (userId: string): Promise<UserData | null>
     return null;
   }
 };
-
+export interface OtherUserData extends UserData {
+}
 export type Comment = {
   commentId: number;
   content: string;

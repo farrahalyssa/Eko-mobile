@@ -26,7 +26,19 @@ async function getLikesForPost(postId) {
     await connection.end();
     return likes;
 }
+async function getPostOwner(postId) {
+    let connection = await mysql.createConnection(dbConfig);
+    let [rows] = await connection.execute(`
+        SELECT userId FROM posts WHERE postId = ?
+    `, [postId]);
+    await connection.end();
 
+    if (rows.length === 0) {
+        throw new Error('Post not found');
+    }
+
+    return rows[0].userId;
+}
 async function countLikesForPost(postId) {
     let connection = await mysql.createConnection(dbConfig);
     let [rows] = await connection.execute('SELECT COUNT(*) AS likeCount FROM likes WHERE postId = ?', [postId]);
@@ -39,4 +51,5 @@ module.exports = {
     unlikePost,
     getLikesForPost,
     countLikesForPost,
+    getPostOwner
 };

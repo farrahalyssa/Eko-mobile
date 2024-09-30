@@ -63,6 +63,7 @@ export default function ChatList() {
     const otherUser = otherUsersData[otherUserId];
     const otherUserInfo = Array.isArray(otherUser) && otherUser.length > 0 ? otherUser[0] : null;
 
+    
     return (
       <TouchableOpacity 
         onPress={() => 

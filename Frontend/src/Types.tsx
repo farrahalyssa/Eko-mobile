@@ -36,6 +36,19 @@ export type StackParamList = {
         receiverId: string; 
       };
       ChatList: undefined;
+      Search: any;
+      Notification: {
+        notificationId: string;
+        senderName: string;
+        senderId: string;
+        senderUsername: string;
+        receiverId: string;
+        senderProfileImage: string;
+        type: 'like' | 'comment' | 'follow';
+        postId?: string;
+        description: string;
+        created_at: string;
+        hasBeenViewed: boolean;};
 
     }
 

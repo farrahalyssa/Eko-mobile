@@ -18,6 +18,20 @@ async function deletePost(userId, postId) {
     await connection.end();
 }
 
+// async function updatePost(userId, postId, content) {
+//     let connection = await mysql.createConnection(dbConfig);
+//     await connection.execute(`UPDATE posts SET content = ? WHERE postId = ? AND userId = ?`, [content, postId, userId]);
+//     await connection.end();
+// }
+
+async function getPostOwnerId(postId) {
+    let connection = await mysql.createConnection(dbConfig);
+    let [rows] = await connection.execute(`
+        SELECT userId FROM posts WHERE postId = ?
+    `, [postId]);
+    await connection.end();
+    return rows[0].userId;
+}
 async function getPostById(userId,postId) {
     console.log(userId, postId);
     let connection;
@@ -117,5 +131,6 @@ module.exports = {
     deletePost,
     getPostById,
     getPostsByUser,
-    getFeedPosts
+    getFeedPosts,
+    getPostOwnerId
 };

@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, Image } from 'react-native';
+import { View, Text, FlatList, Image, TouchableOpacity } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import axios from 'axios';
-import { StackParamList } from '../Types';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
+import { StackParamList } from '../Types';
 import { API_URL } from '../API_URL';
+import { navigateToProfile } from '../utils/ProfileNavigationUtils';
+import { getOtherUserData } from '../utils/data';
+import customLogger from '../utils/loggerUtils';
 type ConnectionsRouteProp = RouteProp<StackParamList, 'Connections'>;
+type NavigationProp = StackNavigationProp<StackParamList, 'ExternalProfile'>;
 
 interface Connection {
   userId: string;
@@ -16,17 +21,17 @@ interface Connection {
 
 export default function Connections() {
   const route = useRoute<ConnectionsRouteProp>();
-  const { userId, type } = route.params; // type will be 'following' or 'followers'
-  const navigation = useNavigation();
-
+  const { userId, type } = route.params; 
+  const navigation = useNavigation<NavigationProp>();
   const [connections, setConnections] = useState<Connection[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // Fetching the connections from the backend
   const fetchConnections = async () => {
     setLoading(true);
     try {
       const endpoint = `http://${API_URL}/api/users/${userId}/${type}Data`;
-      const response = await axios.get(endpoint);
+      const response = await axios.get<Connection[]>(endpoint);
       setConnections(response.data);
     } catch (err: any) {
       if (err.response) {
@@ -36,37 +41,58 @@ export default function Connections() {
       } else {
         console.error('Error setting up request:', err.message);
       }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
-  
 
+  // Fetch connections when component mounts or type changes
   useEffect(() => {
-    // Set the navigation title dynamically based on the type (following or followers)
     navigation.setOptions({ title: type === 'following' ? 'Following' : 'Followers' });
     fetchConnections();
   }, [type]);
 
+  // Rendering each connection item
   const renderConnectionItem = ({ item }: { item: Connection }) => {
-    console.log('Connection Item:', item); // Add this for debugging
+    const handlePress = async () => {
+      try {
+        const otherUserData = await getOtherUserData(item.userId);
+        const userData = Array.isArray(otherUserData) ? otherUserData[0] : otherUserData;
+        customLogger(userData); 
+
+        navigateToProfile(
+          navigation, 
+          item.userId, 
+          item.name, 
+          item.username, 
+          item.profileImage, 
+          userData?.bio || '', 
+          userData?.created_at || ''
+        );
+      } catch (error) {
+        console.error('Error fetching other user data:', error);
+      }
+    };
+
     return (
-      <View style={{ flexDirection: 'row', padding: 10, alignItems: 'center' }}>
-        {item.profileImage ? (
-  <Image 
-    source={{ uri: item.profileImage }} 
-    style={{ width: 50, height: 50, borderRadius: 25 }}
-  />
-) : (
-  <Ionicons name="person-circle" size={50} color="#CFE1D0" />
-)}
-        <View style={{ marginLeft: 10 }}>
-          <Text>{item.name}</Text>
-          <Text>@{item.username}</Text>
+      <TouchableOpacity onPress={handlePress}>
+        <View style={{ flexDirection: 'row', padding: 10, alignItems: 'center' }}>
+          {item.profileImage ? (
+            <Image 
+              source={{ uri: item.profileImage }} 
+              style={{ width: 50, height: 50, borderRadius: 25 }}
+            />
+          ) : (
+            <Ionicons name="person-circle" size={50} color="#CFE1D0" />
+          )}
+          <View style={{ marginLeft: 10 }}>
+            <Text>{item.name}</Text>
+            <Text>@{item.username}</Text>
+          </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
-  
 
   return (
     <View style={{ flex: 1, padding: 20 }}>
@@ -75,7 +101,7 @@ export default function Connections() {
       ) : (
         <FlatList 
           data={connections}
-          keyExtractor={(item) => item.userId ? item.userId.toString() : Math.random().toString()}
+          keyExtractor={(item) => item.userId}
           renderItem={renderConnectionItem}
         />
       )}
