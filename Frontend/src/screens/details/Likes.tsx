@@ -69,21 +69,22 @@ const Likes = ({ route }: any) => {
           data={likes}
           keyExtractor={(item: any) => item.userId.toString()}
           renderItem={({ item }) => (
-            <View style={styles.likeItem}>
               <TouchableOpacity onPress={() => handlePress(item)}>
+            <View style={styles.likeItem}>
+
             {item.profilephoto_url ? (
   <Image source={{ uri: item.profilephoto_url }} style={styles.profilePhoto} />
 ) : (
   <Ionicons name="person-circle" size={40} color="#CFE1D0" />
 )}
 
-
               <View style={styles.userInfo}>
                 <Text style={styles.username}>{item.username}</Text>
                 <Text style={styles.name}>{item.name}</Text>
               </View>
+              </View>
+
               </TouchableOpacity>
-            </View>
           )}
         />
       )}
@@ -94,15 +95,12 @@ const Likes = ({ route }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     padding: 10,
   },
   likeItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    paddingVertical: 5,
   },
   profilePhoto: {
     width: 50,

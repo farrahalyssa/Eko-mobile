@@ -1,17 +1,20 @@
-// In your Notification component file
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { API_URL } from '../../API_URL';
-import { timeAgo } from '../../utils/timeAgo'; 
+import { timeAgo } from '../../utils/timeAgo';
 import { useUserData } from '../../utils/data';
-import { io } from 'socket.io-client'; 
-import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons
+import { io } from 'socket.io-client';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { StackParamList } from '../../Types';
-import { navigateToProfile } from '../../utils/ProfileNavigationUtils'; // Import the utility
+import { navigateToProfile } from '../../utils/ProfileNavigationUtils';
+import { registerForPushNotificationsAsync, setupNotificationHandler, handleNotificationResponseListener } from './NotificationServer'; 
+import * as Notifications from 'expo-notifications';
+import { Notification as ExpoNotification } from 'expo-notifications';
 
+// Define the Notification interface
 interface Notification {
   notificationId: string;
   senderName: string;
@@ -28,19 +31,37 @@ interface Notification {
   hasBeenViewed: boolean;
 }
 
+// Define type for navigation prop
 type NotificationScreenNavigationProp = StackNavigationProp<StackParamList, 'Notification'>;
+
+// Type guard to ensure that the incoming data conforms to the Notification interface
+const isNotification = (data: any): data is Notification => {
+  return (
+    typeof data.notificationId === 'string' &&
+    typeof data.senderName === 'string' &&
+    typeof data.senderId === 'string' &&
+    typeof data.senderUsername === 'string' &&
+    typeof data.type === 'string' &&
+    typeof data.created_at === 'string'
+  );
+};
 
 const Notification = () => {
   const { userData } = useUserData();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const navigation = useNavigation<NotificationScreenNavigationProp>();
-  const userId = userData?.userId; 
+  const navigation = useNavigation<StackNavigationProp<StackParamList, 'Notification'>>();
+  const userId = userData?.userId;
   const socket = io(`http://${API_URL}`);
 
+  const notificationListener = useRef<any>(null);
+  const responseListener = useRef<any>(null);
+
   useEffect(() => {
+    // Fetch notifications initially
     fetchNotifications();
 
+    // Set up Socket.io for real-time notifications
     socket.on('notification', (newNotification) => {
       console.log('Received new notification:', newNotification);
       setNotifications((prevNotifications) => [newNotification, ...prevNotifications]);
@@ -51,11 +72,46 @@ const Notification = () => {
     };
   }, [userId]);
 
+  useEffect(() => {
+    // Set up push notifications
+    async function setupPushNotifications() {
+      setupNotificationHandler();
+
+      const token = await registerForPushNotificationsAsync();
+      if (token) {
+        console.log('Expo Push Token:', token);
+      }
+
+      // Set up listeners for push notifications
+      notificationListener.current = Notifications.addNotificationReceivedListener((notification: ExpoNotification) => {
+        const notificationData = notification.request.content.data;
+
+        // Use type guard to ensure notificationData conforms to Notification
+        if (isNotification(notificationData)) {
+          setNotifications((prevNotifications) => [notificationData, ...prevNotifications]);
+        } else {
+          console.error('Invalid notification data', notificationData);
+        }
+      });
+
+      responseListener.current = handleNotificationResponseListener();
+    }
+
+    setupPushNotifications();
+
+    return () => {
+      if (notificationListener.current) {
+        Notifications.removeNotificationSubscription(notificationListener.current);
+      }
+      if (responseListener.current) {
+        Notifications.removeNotificationSubscription(responseListener.current);
+      }
+    };
+  }, []);
 
   const fetchNotifications = async () => {
     try {
       const response = await axios.get<Notification[]>(`http://${API_URL}/api/users/${userId}/notifications`);
-      console.log("yes", response.data);
       setNotifications(response.data);
     } catch (error) {
       console.error('Error fetching notifications:', error);
@@ -68,7 +124,6 @@ const Notification = () => {
     if ((notification.type === 'like' || notification.type === 'comment') && notification.postId) {
       navigation.navigate('PostDetails', { postId: notification.postId, userId: notification.senderId });
     } else if (notification.type === 'follow') {
-      // Navigate to the profile using the utility function
       navigateToProfile(
         navigation,
         notification.senderId,

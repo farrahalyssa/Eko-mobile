@@ -1,28 +1,34 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, Platform } from 'react-native';
+import React, { useEffect, useRef } from 'react';
 import StackNav from './src/navigation/Stack';
-import { registerForPushNotificationsAsync, setupNotificationHandler, handleNotificationResponseListener } from './src/navigation/notifications/NotificationService';
+import { registerForPushNotificationsAsync, setupNotificationHandler, handleNotificationResponseListener, cleanupNotificationListeners } from './src/screens/main/NotificationServer';
 import * as Notifications from 'expo-notifications';
 
 export default function App() {
-  const [expoPushToken, setExpoPushToken] = useState<string | undefined>();
-  const notificationListener = useRef<any>();
-  const responseListener = useRef<any>();
+  const notificationListener = useRef<any>(null);
+  const responseListener = useRef<any>(null);
 
   useEffect(() => {
-    setupNotificationHandler();
+    async function setupNotifications() {
+      setupNotificationHandler();
 
-    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+      const token = await registerForPushNotificationsAsync();
+      if (token) {
+        console.log('Expo Push Token:', token);
+        // Optionally, send the token to your backend
+      }
 
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      console.log('Notification Received:', notification);
-    });
+      // Set up listeners for notifications
+      notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+        console.log('Notification received:', notification);
+      });
 
-    responseListener.current = handleNotificationResponseListener();
+      responseListener.current = handleNotificationResponseListener();
+    }
+
+    setupNotifications();
 
     return () => {
-      Notifications.removeNotificationSubscription(notificationListener.current);
-      Notifications.removeNotificationSubscription(responseListener.current);
+      cleanupNotificationListeners(notificationListener, responseListener);
     };
   }, []);
 
